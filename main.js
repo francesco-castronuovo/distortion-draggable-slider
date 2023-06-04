@@ -4,23 +4,23 @@ const clamp = (val, min, max) => Math.max(min, Math.min(val, max))
 const components = document.querySelectorAll('[fc-distortion-slider = component]')
 
 class DragScroll {
-	constructor(obj) {
+    constructor(obj) {
   	this.component = obj.component
-    this.slider = this.component.querySelector(obj.slider)
-    this.mask = this.component.querySelector(obj.mask)
-    this.slides = this.component.querySelectorAll(obj.slides)
-    this.progressBar = this.component.querySelector(obj.progressBar)
+    	this.slider = this.component.querySelector(obj.slider)
+    	this.mask = this.component.querySelector(obj.mask)
+    	this.slides = this.component.querySelectorAll(obj.slides)
+    	this.progressBar = this.component.querySelector(obj.progressBar)
     
-    this.speedFactor = obj.speedFactor,
-    this.strength = obj.strength,
-    this.scaleFactor = obj.scaleFactor,
-    this.distortionFactor = obj.distortionFactor
+    	this.speedFactor = obj.speedFactor,
+    	this.strength = obj.strength,
+    	this.scaleFactor = obj.scaleFactor,
+    	this.distortionFactor = obj.distortionFactor
     
-    this.init()
-  }
+    	this.init()
+    }
   
   init() {
-  	this.progress = 0
+    this.progress = 0
     this.speed = 0
     this.oldX = 0
     this.x = 0
@@ -33,8 +33,8 @@ class DragScroll {
   }
   
   bindings() {
-  	[
-    	"events",
+     [
+      "events",
       "calculate",
       "raf",
       "handleWheel",
@@ -48,25 +48,25 @@ class DragScroll {
   }
   
   calculate() {
-  	this.progress = 0
+    this.progress = 0
     this.wrapWidth = this.slides[0].clientWidth * this.slides.length
     this.mask.style.width = `${this.wrapWidth}px`
     this.maxScroll = this.wrapWidth - this.component.clientWidth
   }
   
   handleWheel(e) {
-  	this.progress	+= e.deltaY
+    this.progress += e.deltaY
     this.move()
   }
   
   handleTouchStart(e) {
-  	e.preventDefault()
+    e.preventDefault()
     this.dragging =  true
     this.startX = e.clientX || e.touches[0].clientX
   }
   
   handleTouchMove(e) {
-  	if(!this.dragging) return false;
+    if(!this.dragging) return false;
     
     const x = e.clientX || e.touches[0].clientX
     this.progress += (this.startX - x) * this.speedFactor
@@ -83,7 +83,7 @@ class DragScroll {
   }
   
   events() {
-  	window.addEventListener("resize", this.calculate)
+    window.addEventListener("resize", this.calculate)
     
     this.slider.addEventListener("touchstart", this.handleTouchStart)
     this.slider.addEventListener("touchmove", this.handleTouchMove)
@@ -97,7 +97,7 @@ class DragScroll {
   }
   
   raf() {
-  	this.x = lerp(this.x, this.progress, this.strength)
+    this.x = lerp(this.x, this.progress, this.strength)
     this.playrate = this.x / this.maxScroll
     
     this.mask.style.transform = `translatex(${-this.x}px)`
@@ -114,37 +114,41 @@ class DragScroll {
   }
 }
 
-for(const component of components)
-{
+var Webflow = Webflow || [];
+Webflow.push(function () {
+
+	for(const component of components)
+	{
 	const speedAttribute = parseFloat(component.getAttribute('fc-distortion-slider-speed'))
-  const speedFactor = isNaN(speedAttribute) ? 5 : speedAttribute
-  
-  const strengthAttribute = parseFloat(component.getAttribute('fc-distortion-slider-strength'))
-  const strength = isNaN(strengthAttribute) ? 0.05 : strengthAttribute
-  
-  const scaleAttribute = parseFloat(component.getAttribute('fc-distortion-slider-scale'))
-  const scaleFactor = isNaN(scaleAttribute) ? 0.003 : scaleAttribute
-  
-  const distortionAttribute = parseFloat(component.getAttribute('fc-distortion-slider-distortion'))
-  const distortionFactor = isNaN(distortionAttribute) ? 0.006 : distortionAttribute
+	  const speedFactor = isNaN(speedAttribute) ? 5 : speedAttribute
 
-  const scroll = new DragScroll({
-    component: component,
-    slider:"[fc-distortion-slider = slider]", 
-    mask: "[fc-distortion-slider = mask]",
-    slides: "[fc-distortion-slider = slide]",
-    progressBar: "[fc-distortion-slider = progress-bar]",
-    
-    speedFactor: speedFactor,
-    strength: strength,
-    scaleFactor: scaleFactor,
-    distortionFactor: distortionFactor
-  })
+	  const strengthAttribute = parseFloat(component.getAttribute('fc-distortion-slider-strength'))
+	  const strength = isNaN(strengthAttribute) ? 0.05 : strengthAttribute
 
-  const animateScroll = () => {
-    requestAnimationFrame(animateScroll)
-    scroll.raf()
-  }
+	  const scaleAttribute = parseFloat(component.getAttribute('fc-distortion-slider-scale'))
+	  const scaleFactor = isNaN(scaleAttribute) ? 0.003 : scaleAttribute
 
-  animateScroll()
-}
+	  const distortionAttribute = parseFloat(component.getAttribute('fc-distortion-slider-distortion'))
+	  const distortionFactor = isNaN(distortionAttribute) ? 0.006 : distortionAttribute
+
+	  const scroll = new DragScroll({
+	    component: component,
+	    slider:"[fc-distortion-slider = slider]", 
+	    mask: "[fc-distortion-slider = mask]",
+	    slides: "[fc-distortion-slider = slide]",
+	    progressBar: "[fc-distortion-slider = progress-bar]",
+
+	    speedFactor: speedFactor,
+	    strength: strength,
+	    scaleFactor: scaleFactor,
+	    distortionFactor: distortionFactor
+	  })
+
+	  const animateScroll = () => {
+	    requestAnimationFrame(animateScroll)
+	    scroll.raf()
+	  }
+
+	  animateScroll()
+	}
+})
