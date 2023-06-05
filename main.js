@@ -101,7 +101,8 @@ class DragScroll {
     this.playrate = this.x / this.maxScroll
     
     this.mask.style.transform = `translatex(${-this.x}px)`
-    this.progressBar.style.transform = `scaleX(${0.18 + this.playrate * 0.82})`
+    if(this.progressBar !== null)
+    	this.progressBar.style.transform = `scaleX(${0.18 + this.playrate * 0.82})`
     
     
     this.speed = Math.min(100, this.oldX - this.x)
